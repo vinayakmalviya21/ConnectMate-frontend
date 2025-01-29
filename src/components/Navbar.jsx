@@ -57,7 +57,7 @@ const Navbar = () => {
             <div className="hidden sm:flex sm:items-center">
               <div className="flex space-x-4">
                 <Link
-                  to="/"
+                  to="/home"
                   className="relative text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-md font-medium after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-blue-500 after:scale-x-0 hover:after:scale-x-100 after:transition-transform after:duration-300 after:origin-left"
                   onClick={handleLinkClick}
                 >
@@ -144,7 +144,7 @@ const Navbar = () => {
           )}
           <div className="mt-4 space-y-4 text-black">
             <Link
-              to="/"
+              to="/home"
               className="flex items-center space-x-2 px-4 py-2 text-lg font-medium hover:bg-gray-100"
               onClick={handleLinkClick}
             >
