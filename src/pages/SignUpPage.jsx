@@ -6,15 +6,22 @@ import Swal from "sweetalert2";
 
 export default function Signup() {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-  const [username, setUsername] = useState(""); 
+  const [userName, setUserName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [preferences, setPreferences] = useState(""); 
+  const [preferences, setPreferences] = useState([]);
 
   const navigate = useNavigate();
 
   const togglePasswordVisibility = () => {
     setIsPasswordVisible(!isPasswordVisible);
+  };
+
+  const handlePreferenceChange = (e) => {
+    const { value, checked } = e.target;
+    setPreferences((prev) =>
+      checked ? [...prev, value] : prev.filter((p) => p !== value)
+    );
   };
 
   const handleSubmit = async (e) => {
@@ -27,13 +34,13 @@ export default function Signup() {
         text: "Password must be between 4 and 10 characters.",
         confirmButtonText: "Okay",
       });
-      return; 
+      return;
     }
 
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_API_URL}/auth/register`,
-        { username, email, password, preferences },
+        { username:userName, email, password, preferences },
         {
           headers: {
             "Content-Type": "application/json",
@@ -60,7 +67,6 @@ export default function Signup() {
         });
       }
     } catch (error) {
-      console.error("Error details:", error);
       let errorMessage = "An error occurred. Please try again.";
 
       if (error.response) {
@@ -77,6 +83,11 @@ export default function Signup() {
     }
   };
 
+  const preferenceOptions = [
+    "Movies", "Cricket", "Football", "Anime", "Cooking",
+    "Traveling", "Music", "Reading", "Gaming", "Technology"
+  ];
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-blue-500 to-purple-600">
       <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full">
@@ -84,99 +95,43 @@ export default function Signup() {
           Create Account
         </h2>
         <form onSubmit={handleSubmit}>
-          
           <div className="mb-4">
-            <label
-              className="block text-gray-700 text-sm font-semibold mb-2"
-              htmlFor="username"
-            >
-              Username
-            </label>
-            <input
-              type="text"
-              id="username"
-              className="border border-gray-300 rounded-lg py-2 px-4 w-full focus:outline-none focus:border-blue-500"
-              placeholder="Your username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              required
-            />
+            <label className="block text-gray-700 text-sm font-semibold mb-2">Username</label>
+            <input type="text" className="border border-gray-300 rounded-lg py-2 px-4 w-full focus:outline-none focus:border-blue-500" placeholder="John Doe" value={userName} onChange={(e) => setUserName(e.target.value)} required />
           </div>
 
           <div className="mb-4">
-            <label
-              className="block text-gray-700 text-sm font-semibold mb-2"
-              htmlFor="email"
-            >
-              Email
-            </label>
-            <input
-              type="email"
-              id="email"
-              className="border border-gray-300 rounded-lg py-2 px-4 w-full focus:outline-none focus:border-blue-500"
-              placeholder="you@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
+            <label className="block text-gray-700 text-sm font-semibold mb-2">Email</label>
+            <input type="email" className="border border-gray-300 rounded-lg py-2 px-4 w-full focus:outline-none focus:border-blue-500" placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
           </div>
 
           <div className="mb-4 relative">
-            <label
-              className="block text-gray-700 text-sm font-semibold mb-2"
-              htmlFor="password"
-            >
-              Password
-            </label>
-            <input
-              type={isPasswordVisible ? "text" : "password"}
-              id="password"
-              className="border border-gray-300 rounded-lg py-2 px-4 pr-10 w-full focus:outline-none focus:border-blue-500"
-              placeholder="********"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              maxLength={10}
-              required
-            />
-            <button
-              type="button"
-              onClick={togglePasswordVisibility}
-              className="mt-6 absolute inset-y-0 right-3 flex items-center text-gray-600 focus:outline-none"
-            >
+            <label className="block text-gray-700 text-sm font-semibold mb-2">Password</label>
+            <input type={isPasswordVisible ? "text" : "password"} className="border border-gray-300 rounded-lg py-2 px-4 pr-10 w-full focus:outline-none focus:border-blue-500" placeholder="********" value={password} onChange={(e) => setPassword(e.target.value)} maxLength={10} required />
+            <button type="button" onClick={togglePasswordVisibility} className="absolute inset-y-0 right-3 mt-6 flex items-center text-gray-600 focus:outline-none">
               {isPasswordVisible ? <FiEyeOff size={20} /> : <FiEye size={20} />}
             </button>
           </div>
 
           <div className="mb-4">
-            <label
-              className="block text-gray-700 text-sm font-semibold mb-2"
-              htmlFor="preferences"
-            >
-              Preferences (Optional)
-            </label>
-            <input
-              type="text"
-              id="preferences"
-              className="border border-gray-300 rounded-lg py-2 px-4 w-full focus:outline-none focus:border-blue-500"
-              placeholder="Your preferences"
-              value={preferences}
-              onChange={(e) => setPreferences(e.target.value)}
-            />
+            <label className="block text-gray-700 text-sm font-semibold mb-2">Preferences</label>
+            <div className="grid grid-cols-2 gap-2">
+              {preferenceOptions.map((option) => (
+                <label key={option} className="flex items-center space-x-2">
+                  <input type="checkbox" value={option} checked={preferences.includes(option)} onChange={handlePreferenceChange} className="form-checkbox h-4 w-4 text-blue-600" />
+                  <span className="text-gray-700 text-sm">{option}</span>
+                </label>
+              ))}
+            </div>
           </div>
 
-          <button
-            type="submit"
-            className="w-full mt-auto inline-block bg-gradient-to-r from-purple-600 to-blue-500 text-white py-2 px-4 rounded-md font-medium hover:bg-blue-600 transition duration-300 transform hover:scale-105"
-          >
+          <button type="submit" className="w-full mt-auto inline-block bg-gradient-to-r from-purple-600 to-blue-500 text-white py-2 px-4 rounded-md font-medium hover:bg-blue-600 transition duration-300 transform hover:scale-105">
             Sign Up
           </button>
         </form>
 
         <p className="mt-4 text-center text-gray-600">
-          Already have an account?{" "}
-          <a href="/" className="text-blue-500 hover:underline">
-            Log In
-          </a>
+          Already have an account? <a href="/" className="text-blue-500 hover:underline">Log In</a>
         </p>
       </div>
     </div>
